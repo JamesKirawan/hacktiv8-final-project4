@@ -45,8 +45,6 @@ module.exports = {
       );
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface
-      .dropTable("Photos")
-      .then(() => queryInterface.removeConstraint("Photos", "user_fk"));
+    await queryInterface.dropTable("Photos");
   },
 };

@@ -33,6 +33,7 @@ exports.registerUser = async (req, res) => {
         })
           .then((user) => {
             const token = generateToken({
+              id: user.id,
               full_name: user.full_name,
               email: user.email,
               username: user.username,
@@ -91,6 +92,7 @@ exports.loginUser = async (req, res) => {
         });
       }
       let payload = {
+        id: user.id,
         full_name: user.full_name,
         email: user.email,
         username: user.username,
@@ -103,5 +105,74 @@ exports.loginUser = async (req, res) => {
     })
     .catch((err) => {
       return res.status(401).json(err);
+    });
+};
+
+exports.putUser = async (req, res) => {
+  const userIdFromHeader = req.userId;
+  const userIdFromParams = req.params.userId;
+  if (userIdFromHeader != userIdFromParams) {
+    return res.status(400).json({
+      message: "Tidak Memiliki Hak Untuk Mengubah User Tersebut",
+    });
+  }
+  const { email, full_name, username, profile_image_url, age, phone_number } =
+    req.body;
+  let data = {
+    email,
+    full_name,
+    username,
+    profile_image_url,
+    age,
+    phone_number,
+  };
+  await User.update(data, {
+    where: {
+      id: userIdFromParams,
+    },
+    returning: true,
+    plain: true,
+  })
+    .then((user) => {
+      return res.status(200).json({
+        user: {
+          email: user[1].dataValues.email,
+          full_name: user[1].dataValues.full_name,
+          username: user[1].dataValues.username,
+          profile_image_url: user[1].dataValues.profile_image_url,
+          age: user[1].dataValues.age,
+          phone_number: user[1].dataValues.phone_number,
+        },
+      });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        message: "Gagal Mengubah Data",
+      });
+    });
+};
+
+exports.deleteUser = async (req, res) => {
+  const userIdFromHeader = req.userId;
+  const userIdFromParams = req.params.userId;
+  if (userIdFromHeader != userIdFromParams) {
+    return res.status(400).json({
+      message: "Tidak Memiliki Hak Untuk Mengubah User Tersebut",
+    });
+  }
+  await User.destroy({
+    where: {
+      id: userIdFromParams,
+    },
+  })
+    .then((result) => {
+      res.status(200).json({
+        message: "Your Account Has Been successfully deleted",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Gagal Menghapus User",
+      });
     });
 };
