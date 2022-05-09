@@ -53,7 +53,6 @@ exports.registerUser = async (req, res) => {
             });
           })
           .catch((e) => {
-            console.log(e);
             res.status(503).json(e.errors);
           });
       }
@@ -134,7 +133,7 @@ exports.putUser = async (req, res) => {
     plain: true,
   })
     .then((user) => {
-      return res.status(200).json({
+      res.status(200).json({
         user: {
           email: user[1].dataValues.email,
           full_name: user[1].dataValues.full_name,
@@ -146,7 +145,7 @@ exports.putUser = async (req, res) => {
       });
     })
     .catch((err) => {
-      return res.status(500).json({
+      res.status(500).json({
         message: "Gagal Mengubah Data",
       });
     });
