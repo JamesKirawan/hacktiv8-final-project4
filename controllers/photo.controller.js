@@ -14,7 +14,7 @@ exports.getPhoto = async (req, res) => {
     ],
   })
     .then((photo) => {
-      console.log("test");
+      // console.log("test");
       res.status(200).json({
         photos: {
           id: photo[0].dataValues.id,
