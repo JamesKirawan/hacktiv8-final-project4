@@ -6,7 +6,7 @@ const auth = require("../middlewares/auth");
 
 router.get("/", auth.verify, controller.getPhoto);
 router.post("/", auth.verify, controller.postPhoto);
-// router.put("/:photoId", auth.verify, controller.putUser);
-// router.delete("/:photoId", auth.verify, controller.deleteUser);
+router.put("/:photoId", auth.verify, controller.putPhoto);
+router.delete("/:photoId", auth.verify, controller.deletePhoto);
 
 module.exports = router;

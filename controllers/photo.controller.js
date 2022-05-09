@@ -14,21 +14,25 @@ exports.getPhoto = async (req, res) => {
     ],
   })
     .then((photo) => {
-      res.status(200).json({
-        photos: {
-          id: photo[0].dataValues.id,
-          poster_image_url: photo[0].dataValues.poster_image_url,
-          title: photo[0].dataValues.title,
-          caption: photo[0].dataValues.caption,
-          UserId: photo[0].dataValues.UserId,
-          createdAt: photo[0].dataValues.createdAt,
-          updatedAt: photo[0].dataValues.updatedAt,
+      let photos = [];
+      for (i = 0; i < photo.length; i++) {
+        photos.push({
+          id: photo[i].dataValues.id,
+          poster_image_url: photo[i].dataValues.poster_image_url,
+          title: photo[i].dataValues.title,
+          caption: photo[i].dataValues.caption,
+          UserId: photo[i].dataValues.UserId,
+          createdAt: photo[i].dataValues.createdAt,
+          updatedAt: photo[i].dataValues.updatedAt,
           User: {
-            id: photo[0].dataValues.user.id,
-            username: photo[0].dataValues.user.username,
-            profile_image_url: photo[0].dataValues.user.profile_image_url,
+            id: photo[i].dataValues.user.id,
+            username: photo[i].dataValues.user.username,
+            profile_image_url: photo[i].dataValues.user.profile_image_url,
           },
-        },
+        });
+      }
+      res.status(200).json({
+        photos,
       });
     })
     .catch((e) => {
@@ -59,6 +63,74 @@ exports.postPhoto = async (req, res) => {
     .catch((e) => {
       res.status(503).json({
         message: "Gagal Membuat Photo",
+      });
+    });
+};
+
+exports.putPhoto = async (req, res) => {
+  let userId = req.userId;
+  let photoId = req.params.photoId;
+  const { poster_image_url, title, caption } = req.body;
+  const photo = await Photo.findByPk(photoId);
+  let data = {
+    poster_image_url,
+    title,
+    caption,
+  };
+  if (photo.UserId !== userId) {
+    return res.status(401).json({
+      message: "Anda Tidak Memiliki Akses Untuk Mendelete Photo Ini",
+    });
+  }
+  await Photo.update(data, {
+    where: {
+      id: photoId,
+    },
+    returning: true,
+    plain: true,
+  })
+    .then((photo) => {
+      res.status(200).json({
+        photo: {
+          id: photo[1].dataValues.id,
+          title: photo[1].dataValues.title,
+          caption: photo[1].dataValues.caption,
+          poster_image_url: photo[1].dataValues.poster_image_url,
+          userId: photo[1].dataValues.UserId,
+          createdAt: photo[1].dataValues.createdAt,
+          updatedAt: photo[1].dataValues.updatedAt,
+        },
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Gagal Mengubah Data",
+      });
+    });
+};
+
+exports.deletePhoto = async (req, res) => {
+  let userId = req.userId;
+  let photoId = req.params.photoId;
+  const photo = await Photo.findByPk(photoId);
+  if (photo.UserId !== userId) {
+    return res.status(401).json({
+      message: "Anda Tidak Memiliki Akses Untuk Mendelete Photo Ini",
+    });
+  }
+  await Photo.destroy({
+    where: {
+      id: photoId,
+    },
+  })
+    .then((result) => {
+      res.status(200).json({
+        message: "Your Photo Has Been successfully deleted",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Gagal Menghapus Photo",
       });
     });
 };
