@@ -13,6 +13,14 @@ module.exports = (sequelize, DataTypes) => {
         as: "photos",
         foreignKey: "UserId",
       });
+      this.hasMany(models.Comment, {
+        as: "comment",
+        foreignKey: "UserId",
+      });
+      this.hasMany(models.SocialMedia, {
+        as: "socialmedia",
+        foreignKey: "UserId",
+      });
     }
   }
   User.init(
