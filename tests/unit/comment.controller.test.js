@@ -19,10 +19,10 @@ const reflectionData = {
 };
 
 describe("CommentController.getComment", () => {
-  it("get All comment should return 201 ", async () => {
+  it("get All comment should return 200 ", async () => {
     Comment.findAll.mockResolvedValue({ comment: "comment" });
     await CommentController.getComment(req, res);
-    expect(res.statusCode).toBe(201);
+    expect(res.statusCode).toBe(200);
   });
 
   it("should return 503", async () => {

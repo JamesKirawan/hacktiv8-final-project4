@@ -22,10 +22,10 @@ const Data = {
 };
 
 describe("SocialMediaController.getSocialMedia", () => {
-  it("getAll socialmedia should return 201 ", async () => {
+  it("getAll socialmedia should return 200 ", async () => {
     SocialMedia.findAll.mockResolvedValue({ socialmedia: "facebook" });
     await SocialMediaController.getSocialMedia(req, res);
-    expect(res.statusCode).toBe(201);
+    expect(res.statusCode).toBe(200);
   });
 
   it("getAll socialmedia should return 503 ", async () => {
