@@ -16,7 +16,7 @@ exports.getComment = async (req, res) => {
     ],
   })
     .then((comment) => {
-      res.status(201).json({
+      res.status(200).json({
         comment,
       });
     })

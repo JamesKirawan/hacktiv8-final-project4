@@ -12,7 +12,7 @@ exports.getSocialMedia = async (req, res) => {
     ],
   })
     .then((socialmedia) => {
-      res.status(201).json({
+      res.status(200).json({
         socialmedia,
       });
     })
