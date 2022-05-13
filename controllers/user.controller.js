@@ -154,7 +154,7 @@ exports.deleteUser = async (req, res) => {
   const userIdFromParams = req.params.userId;
   if (userIdFromHeader != userIdFromParams) {
     return res.status(400).json({
-      message: "Tidak Memiliki Hak Untuk Mengubah User Tersebut",
+      message: "Tidak Memiliki Hak Untuk Menghapus User Tersebut",
     });
   }
   await User.destroy({
