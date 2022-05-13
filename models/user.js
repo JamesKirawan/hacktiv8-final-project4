@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.hasMany(models.Photo, {
-        as: "photos",
+        as: "photo",
         foreignKey: "UserId",
       });
       this.hasMany(models.Comment, {
@@ -68,9 +68,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          isNumeric: {
-            msg: "Must Be A Valid Integer",
-          },
+          isNumeric: true
         },
       },
     },

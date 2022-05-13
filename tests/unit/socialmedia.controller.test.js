@@ -53,24 +53,47 @@ describe("Social Media postSocialMedia Testing", () => {
 
 describe("SocialMediaController.putSocialMedia", () => {
     it("should return 401", async () => {
-        req.userId = 1;
-        req.body = Data;
-        SocialMedia.findByPk.mockResolvedValue(Data);
+        const userInstance = {
+            update: jest.fn(),
+            save: jest.fn()
+          }
+          SocialMedia.findByPk.mockResolvedValue({
+            ...Data,
+            ...userInstance
+          });
+        SocialMedia.update.mockResolvedValue(Data);
         await SocialMediaController.putSocialMedia(req, res);
         expect(res.statusCode).toBe(401);
       });
 
     it("update socialmedia should return 200 ", async() => {
-        req.body = Data;
+        req.userId = 1;
+        const socialmediaInstance = {
+            
+            update: jest.fn(),
+            save: jest.fn()
+          }
+          SocialMedia.findByPk.mockResolvedValue({
+            ...Data,
+            ...socialmediaInstance
+          });
         SocialMedia.update.mockResolvedValue(Data);
         await SocialMediaController.putSocialMedia(req, res);
         expect(res.statusCode).toBe(200);
     });
 
     it("update socialmedia should return 500 ", async() => {
-        const rejected = Promise.reject({ message: "error" });
-        SocialMedia.update.mockResolvedValue(rejected);
+        //const rejected = Promise.reject({ message: "error" });
         req.body = Data;
+        req.userId = 1;
+        // const userInstance = {            
+        //     update: jest.fn(),
+        //     save: jest.fn()
+        //   }
+        SocialMedia.findByPk.mockResolvedValue({
+            ...Data
+          });
+       SocialMedia.update.mockRejectedValue( {message: "error" });
         await SocialMediaController.putSocialMedia(req, res);
         expect(res.statusCode).toBe(500);
     });
@@ -78,21 +101,31 @@ describe("SocialMediaController.putSocialMedia", () => {
 
 describe("SocialMedia deleteSocialMedia Testing", () => {
     it("should return 401", async () => {
-        req.userId = 1;
-        SocialMedia.findByPk.mockResolvedValue(Data);
+        req.userId = 2;
+          SocialMedia.findByPk.mockResolvedValue({
+            ...Data
+          });
+          SocialMedia.destroy.mockResolvedValue(true);
         await SocialMediaController.deleteSocialMedia(req, res);
         expect(res.statusCode).toBe(401);
       });
 
     it("delete socialmedia should return 200 ", async() => {
-        SocialMedia.destroy.mockResolvedValue({ socialmedia : "facebook"});
+        req.userId = 1;
+          SocialMedia.findByPk.mockResolvedValue({
+            ...Data
+          });
+          SocialMedia.destroy.mockResolvedValue(true);
         await SocialMediaController.deleteSocialMedia(req, res);
         expect(res.statusCode).toBe(200);
     });
 
     it("delete socialmedia should return 500 ", async() => {
-        const rejected = Promise.reject({ message: "error" });
-        SocialMedia.destroy.mockResolvedValue(rejected);
+        req.userId = 1;
+          SocialMedia.findByPk.mockResolvedValue({
+            ...Data
+          });
+        SocialMedia.destroy.mockRejectedValue({message : "error" });
         await SocialMediaController.deleteSocialMedia(req, res);
         expect(res.statusCode).toBe(500);
     });
