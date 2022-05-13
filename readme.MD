@@ -13,3 +13,6 @@ Options:
 
 1. npm run db:migrate:undo //to undo previous migration
 2. npm run db:seed:undo //to undo all previous db seed
+
+Deployment Link :
+https://hacktiv8-final-project2.herokuapp.com

@@ -2,26 +2,26 @@ const { Photo, User, SocialMedia } = require("../models");
 
 exports.getSocialMedia = async (req, res) => {
   let userId = req.userId;
-   await SocialMedia.findAll({
+  await SocialMedia.findAll({
     include: [
       {
         model: User,
         as: "user",
         attributes: ["id", "username", "profile_image_url"],
       },
-    ]
+    ],
   })
-  .then((socialmedia) => {
-      res.status(201).json({    
-      socialmedia      
+    .then((socialmedia) => {
+      res.status(201).json({
+        socialmedia,
       });
     })
     .catch((e) => {
       res.status(503).json({
         message: "Gagal Menampilkan Social Media",
       });
-    })
-}
+    });
+};
 
 exports.postSocialMedia = async (req, res) => {
   let userId = req.userId;
@@ -49,7 +49,7 @@ exports.postSocialMedia = async (req, res) => {
 exports.putSocialMedia = async (req, res) => {
   let userId = req.userId;
   let socialmediaId = req.params.socialmediaId;
-  const { name, social_media_url  } = req.body;
+  const { name, social_media_url } = req.body;
   const socialmedias = await SocialMedia.findByPk(socialmediaId);
   let data = {
     name,
@@ -68,7 +68,7 @@ exports.putSocialMedia = async (req, res) => {
   })
     .then((socialmedia) => {
       res.status(200).json({
-        socialmedia : socialmedia[1],
+        socialmedia: socialmedia[1],
       });
     })
     .catch((err) => {

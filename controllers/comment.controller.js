@@ -1,7 +1,7 @@
 const { Photo, User, Comment } = require("../models");
 
 exports.getComment = async (req, res) => {
-   await Comment.findAll({
+  await Comment.findAll({
     include: [
       {
         model: User,
@@ -13,49 +13,47 @@ exports.getComment = async (req, res) => {
         as: "photo",
         attributes: ["id", "title", "caption", "poster_image_url"],
       },
-    ]
+    ],
   })
-  .then((comment) => {
-      res.status(201).json({    
-      comment       
+    .then((comment) => {
+      res.status(201).json({
+        comment,
       });
     })
     .catch((e) => {
-      console.log(e)
       res.status(503).json({
-        
         message: "Gagal Menampilkan Comment",
       });
-    })
-}
+    });
+};
 
 exports.postComment = async (req, res) => {
   let userId = req.userId;
   const { comment, PhotoId } = req.body;
   await Photo.findOne({ where: { id: PhotoId } }).then((photo) => {
     if (!photo) {
-        return res.status(401).json({
-            message: `photo with id ${PhotoId} not found`,
-        });
+      return res.status(401).json({
+        message: `photo with id ${PhotoId} not found`,
+      });
     }
-  return Comment.create({
-    comment,
-    PhotoId: PhotoId,
-    UserId: userId,
-  })
-    .then((comment) => {
-      res.status(201).json({
-        id: comment.id,
-        comment: comment.comment,
-        PhotoId: comment.PhotoId,
-        UserId: comment.UserId,
-      });
+    return Comment.create({
+      comment,
+      PhotoId: PhotoId,
+      UserId: userId,
     })
-    .catch((e) => {
-      res.status(503).json({
-        message: "Gagal Membuat Comment",
+      .then((comment) => {
+        res.status(201).json({
+          id: comment.id,
+          comment: comment.comment,
+          PhotoId: comment.PhotoId,
+          UserId: comment.UserId,
+        });
+      })
+      .catch((e) => {
+        res.status(503).json({
+          message: "Gagal Membuat Comment",
+        });
       });
-    });
   });
 };
 
