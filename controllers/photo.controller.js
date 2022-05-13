@@ -113,7 +113,7 @@ exports.putPhoto = async (req, res) => {
     title,
     caption,
   };
-  if (photo.UserId !== userId) {
+  if (photo?.UserId !== userId) {
     return res.status(401).json({
       message: "Anda Tidak Memiliki Akses Untuk Mengubah Photo Ini",
     });
@@ -149,7 +149,7 @@ exports.deletePhoto = async (req, res) => {
   let userId = req.userId;
   let photoId = req.params.photoId;
   const photo = await Photo.findByPk(photoId);
-  if (photo.UserId !== userId) {
+  if (photo?.UserId !== userId) {
     return res.status(401).json({
       message: "Anda Tidak Memiliki Akses Untuk Mendelete Photo Ini",
     });

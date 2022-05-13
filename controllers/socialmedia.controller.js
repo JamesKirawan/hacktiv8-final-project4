@@ -57,7 +57,7 @@ exports.putSocialMedia = async (req, res) => {
     name,
     social_media_url,
   };
-  if (socialmedias.UserId !== userId) {
+  if (socialmedias?.UserId !== userId) {
     return res.status(401).json({
       message: "Anda Tidak Memiliki Akses Untuk Mengubah Social Media Ini",
     });
@@ -84,7 +84,7 @@ exports.deleteSocialMedia = async (req, res) => {
   let userId = req.userId;
   let socialmediaId = req.params.socialmediaId;
   const socialmedia = await SocialMedia.findByPk(socialmediaId);
-  if (socialmedia.UserId !== userId) {
+  if (socialmedia?.UserId !== userId) {
     return res.status(401).json({
       message: "Anda Tidak Memiliki Akses Untuk Mendelete Social Media Ini",
     });

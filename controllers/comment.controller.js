@@ -67,7 +67,7 @@ exports.putComment = async (req, res) => {
   let data = {
     comment,
   };
-  if (comments.UserId !== userId) {
+  if (comments?.UserId !== userId) {
     return res.status(401).json({
       message: "Anda Tidak Memiliki Akses Untuk Mengubah Comment Ini",
     });
@@ -94,7 +94,7 @@ exports.deleteComment = async (req, res) => {
   let userId = req.userId;
   let commentId = req.params.commentId;
   const comment = await Comment.findByPk(commentId);
-  if (comment.UserId !== userId) {
+  if (comment?.UserId !== userId) {
     return res.status(401).json({
       message: "Anda Tidak Memiliki Akses Untuk Mendelete Comment Ini",
     });
