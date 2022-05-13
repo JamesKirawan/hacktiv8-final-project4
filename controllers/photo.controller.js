@@ -1,35 +1,70 @@
-const { Photo, User } = require("../models");
+const { Photo, User, Comment } = require("../models");
 
 exports.getPhoto = async (req, res) => {
   let userId = req.userId;
   await Photo.findAll({
-    where: {
-      UserId: userId,
-    },
     include: [
       {
         model: User,
         as: "user",
+      },
+      {
+        model: Comment,
+        include: [
+          {
+            model: User,
+            as: "user",
+          },
+        ],
+        as: "comment",
       },
     ],
   })
     .then((photo) => {
       let photos = [];
       for (i = 0; i < photo.length; i++) {
-        photos.push({
-          id: photo[i].dataValues.id,
-          poster_image_url: photo[i].dataValues.poster_image_url,
-          title: photo[i].dataValues.title,
-          caption: photo[i].dataValues.caption,
-          UserId: photo[i].dataValues.UserId,
-          createdAt: photo[i].dataValues.createdAt,
-          updatedAt: photo[i].dataValues.updatedAt,
-          User: {
-            id: photo[i].dataValues.user.id,
-            username: photo[i].dataValues.user.username,
-            profile_image_url: photo[i].dataValues.user.profile_image_url,
-          },
-        });
+        let comments = [];
+        if (photo[i].dataValues.comment.length > 0) {
+          for (j = 0; j < photo[i].dataValues.comment.length; j++) {
+            comments.push({
+              comment: photo[i].dataValues.comment[j].comment,
+              User: {
+                username: photo[i].dataValues.comment[j].user.username,
+              },
+            });
+          }
+          photos.push({
+            id: photo[i].dataValues.id,
+            poster_image_url: photo[i].dataValues.poster_image_url,
+            title: photo[i].dataValues.title,
+            caption: photo[i].dataValues.caption,
+            UserId: photo[i].dataValues.UserId,
+            createdAt: photo[i].dataValues.createdAt,
+            updatedAt: photo[i].dataValues.updatedAt,
+            User: {
+              id: photo[i].dataValues.user.id,
+              username: photo[i].dataValues.user.username,
+              profile_image_url: photo[i].dataValues.user.profile_image_url,
+            },
+            Comments: comments,
+          });
+        } else {
+          photos.push({
+            id: photo[i].dataValues.id,
+            poster_image_url: photo[i].dataValues.poster_image_url,
+            title: photo[i].dataValues.title,
+            caption: photo[i].dataValues.caption,
+            UserId: photo[i].dataValues.UserId,
+            createdAt: photo[i].dataValues.createdAt,
+            updatedAt: photo[i].dataValues.updatedAt,
+            Comments: [],
+            User: {
+              id: photo[i].dataValues.user.id,
+              username: photo[i].dataValues.user.username,
+              profile_image_url: photo[i].dataValues.user.profile_image_url,
+            },
+          });
+        }
       }
       res.status(200).json({
         photos,
@@ -80,7 +115,7 @@ exports.putPhoto = async (req, res) => {
   };
   if (photo.UserId !== userId) {
     return res.status(401).json({
-      message: "Anda Tidak Memiliki Akses Untuk Mendelete Photo Ini",
+      message: "Anda Tidak Memiliki Akses Untuk Mengubah Photo Ini",
     });
   }
   await Photo.update(data, {

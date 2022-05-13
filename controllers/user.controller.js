@@ -53,13 +53,12 @@ exports.registerUser = async (req, res) => {
             });
           })
           .catch((e) => {
-            console.log(e)
+            console.log(e);
             res.status(503).json(e.message);
           });
       }
     })
     .catch((e) => {
-      
       res.status(500).json(e.message);
     });
 };

@@ -47,6 +47,8 @@ exports.postComment = async (req, res) => {
           comment: comment.comment,
           PhotoId: comment.PhotoId,
           UserId: comment.UserId,
+          createdAt: comment.createdAt,
+          updatedAt: comment.updatedAt,
         });
       })
       .catch((e) => {

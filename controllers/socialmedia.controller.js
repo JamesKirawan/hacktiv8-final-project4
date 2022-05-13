@@ -37,6 +37,8 @@ exports.postSocialMedia = async (req, res) => {
         name: socialmedia.name,
         social_media_url: socialmedia.social_media_url,
         UserId: socialmedia.UserId,
+        updatedAt: socialmedia.updatedAt,
+        createdAt: socialmedia.createAt,
       });
     })
     .catch((e) => {
