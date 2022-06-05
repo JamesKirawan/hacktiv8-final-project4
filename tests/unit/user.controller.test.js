@@ -20,6 +20,13 @@ const userData = {
   password: "secret",
 };
 
+const nameData = {
+  id: 1,
+  full_name: "Testing",
+  email: "asd@gmail.com",
+  password: "secret",
+};
+
 const testingData = {
   id: 1,
   email: "asd@gmail.com",
@@ -76,6 +83,18 @@ describe("UserController.registerUser", () => {
     await UserController.registerUser(req, res);
     expect(res.statusCode).toBe(500);
   });
+  it("should Equal to Data Given", async () => {
+    User.create.mockResolvedValue(nameData);
+    User.findOne.mockResolvedValue(null);
+    req.body = nameData;
+    await UserController.registerUser(req, res);
+    expect(res._getJSONData()).toEqual({
+      user: {
+        email: nameData.email,
+        full_name: nameData.full_name,
+      },
+    });
+  });
 });
 
 describe("UserController.loginUser", () => {
@@ -103,6 +122,14 @@ describe("UserController.loginUser", () => {
     await UserController.loginUser(req, res);
     expect(res.statusCode).toBe(401);
   });
+  it("should return success token", async () => {
+    User.findOne.mockResolvedValue(testingData);
+    req.body = userData;
+    await UserController.loginUser(req, res);
+    expect(res._getJSONData()).toEqual({
+      token: res._getJSONData().token,
+    });
+  });
 });
 
 describe("UserController.putUser", () => {
@@ -129,6 +156,22 @@ describe("UserController.putUser", () => {
     await UserController.putUser(req, res);
     expect(res.statusCode).toBe(500);
   });
+  it("should Equal to Data Given", async () => {
+    req.userId = 1;
+    req.params.userId = 1;
+    User.update.mockResolvedValue(testingData3);
+    req.body = testingData3;
+    await UserController.putUser(req, res);
+    expect(res._getJSONData()).toEqual({ user: testingData3[1].dataValues });
+  });
+  it("Status Message Should OK", async () => {
+    req.userId = 1;
+    req.params.userId = 1;
+    User.update.mockResolvedValue(testingData3);
+    req.body = testingData3;
+    await UserController.putUser(req, res);
+    expect(res.statusMessage).toBe("OK");
+  });
 });
 
 describe("UserController.deleteUser", () => {
@@ -154,5 +197,23 @@ describe("UserController.deleteUser", () => {
     req.body = userData;
     await UserController.deleteUser(req, res);
     expect(res.statusCode).toBe(500);
+  });
+  it("should equal to given message", async () => {
+    req.userId = 1;
+    req.params.userId = 1;
+    User.destroy.mockResolvedValue(testingData3);
+    req.body = testingData3;
+    await UserController.deleteUser(req, res);
+    expect(res._getJSONData()).toEqual({
+      message: "Your Account Has Been successfully deleted",
+    });
+  });
+  it("Status Message Should OK", async () => {
+    req.userId = 1;
+    req.params.userId = 1;
+    User.destroy.mockResolvedValue(testingData3);
+    req.body = testingData3;
+    await UserController.deleteUser(req, res);
+    expect(res.statusMessage).toEqual("OK");
   });
 });
